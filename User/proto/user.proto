@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "github.com/kiran-blockchain/nextxd-go-advanced/grpc-mongo";
+
+package proto;
+
+service Userservice{
+    rpc CreateUser (User) returns (UserResponse);
+    rpc ListRole (Role) returns (Roleresponse);
+}
+
+message User {
+    string name = 1 ;
+    string email = 2 ;
+    int64 phone_no = 3 ;
+    string password = 4 ;
+    repeated string role = 5;
+}
+
+message  UserResponse {
+    string mes=1;
+}
+message  Role {
+    string role=1;
+}
+message  Roleresponse {
+    string role =1;
+    string responsibility=2;
+    string access=3;
+}
+// protoc --go_out=. --go_opt=paths=source_relative     --go-grpc_out=. --go-grpc_opt=paths=source_relative     proto/*.proto
+
