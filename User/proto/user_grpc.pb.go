@@ -24,6 +24,9 @@ const _ = grpc.SupportPackageIsVersion7
 type UserserviceClient interface {
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*UserResponse, error)
 	ListRole(ctx context.Context, in *Role, opts ...grpc.CallOption) (*Roleresponse, error)
+	UpdateRole(ctx context.Context, in *URole, opts ...grpc.CallOption) (*UserResponse, error)
+	AddRole(ctx context.Context, in *ARole, opts ...grpc.CallOption) (*UserResponse, error)
+	Disable(ctx context.Context, in *Name, opts ...grpc.CallOption) (*Update, error)
 }
 
 type userserviceClient struct {
@@ -52,12 +55,42 @@ func (c *userserviceClient) ListRole(ctx context.Context, in *Role, opts ...grpc
 	return out, nil
 }
 
+func (c *userserviceClient) UpdateRole(ctx context.Context, in *URole, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, "/proto.Userservice/UpdateRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userserviceClient) AddRole(ctx context.Context, in *ARole, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, "/proto.Userservice/AddRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userserviceClient) Disable(ctx context.Context, in *Name, opts ...grpc.CallOption) (*Update, error) {
+	out := new(Update)
+	err := c.cc.Invoke(ctx, "/proto.Userservice/Disable", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserserviceServer is the server API for Userservice service.
 // All implementations must embed UnimplementedUserserviceServer
 // for forward compatibility
 type UserserviceServer interface {
 	CreateUser(context.Context, *User) (*UserResponse, error)
 	ListRole(context.Context, *Role) (*Roleresponse, error)
+	UpdateRole(context.Context, *URole) (*UserResponse, error)
+	AddRole(context.Context, *ARole) (*UserResponse, error)
+	Disable(context.Context, *Name) (*Update, error)
 	mustEmbedUnimplementedUserserviceServer()
 }
 
@@ -70,6 +103,15 @@ func (UnimplementedUserserviceServer) CreateUser(context.Context, *User) (*UserR
 }
 func (UnimplementedUserserviceServer) ListRole(context.Context, *Role) (*Roleresponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRole not implemented")
+}
+func (UnimplementedUserserviceServer) UpdateRole(context.Context, *URole) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRole not implemented")
+}
+func (UnimplementedUserserviceServer) AddRole(context.Context, *ARole) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddRole not implemented")
+}
+func (UnimplementedUserserviceServer) Disable(context.Context, *Name) (*Update, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Disable not implemented")
 }
 func (UnimplementedUserserviceServer) mustEmbedUnimplementedUserserviceServer() {}
 
@@ -120,6 +162,60 @@ func _Userservice_ListRole_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Userservice_UpdateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(URole)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserserviceServer).UpdateRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Userservice/UpdateRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserserviceServer).UpdateRole(ctx, req.(*URole))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Userservice_AddRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ARole)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserserviceServer).AddRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Userservice/AddRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserserviceServer).AddRole(ctx, req.(*ARole))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Userservice_Disable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserserviceServer).Disable(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Userservice/Disable",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserserviceServer).Disable(ctx, req.(*Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Userservice_ServiceDesc is the grpc.ServiceDesc for Userservice service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +230,18 @@ var Userservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListRole",
 			Handler:    _Userservice_ListRole_Handler,
+		},
+		{
+			MethodName: "UpdateRole",
+			Handler:    _Userservice_UpdateRole_Handler,
+		},
+		{
+			MethodName: "AddRole",
+			Handler:    _Userservice_AddRole_Handler,
+		},
+		{
+			MethodName: "Disable",
+			Handler:    _Userservice_Disable_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
